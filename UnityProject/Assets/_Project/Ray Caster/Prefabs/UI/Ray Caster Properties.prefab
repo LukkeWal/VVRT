@@ -3754,7 +3754,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeColor
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 7371111205169302600}
   colorButton: {fileID: 8855100259163335545}
   colorPicker: {fileID: 5829180586250094068}
@@ -11576,7 +11588,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeDensity
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 2402991244508453040}
   slider: {fileID: 4655980269946278756}
   input: {fileID: 8922676895584213532}
@@ -18207,7 +18231,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeColor
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 1624636352233298483}
   colorButton: {fileID: 924187193994146688}
   colorPicker: {fileID: 1414388223775092492}
@@ -24339,7 +24375,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeDensity
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 5492174364488295877}
   slider: {fileID: 4266326437093304911}
   input: {fileID: 5907201310177967679}
@@ -27952,7 +28000,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeDensity
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 4925033254568185073}
   slider: {fileID: 5162917442725574593}
   input: {fileID: 7689156176190114433}
@@ -32951,7 +33011,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeColor
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 2130432829939357104}
   colorButton: {fileID: 4328278881677287015}
   colorPicker: {fileID: 379429963936822337}
@@ -35413,7 +35485,19 @@ MonoBehaviour:
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeComp
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!1 &4157108546002466792
 GameObject:
@@ -38455,7 +38539,19 @@ MonoBehaviour:
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: selectVoxelGrid
+          m_BoolArgument: 0
+        m_CallState: 2
   m_AlphaFadeSpeed: 0.15
 --- !u!1 &4605766156716300267
 GameObject:
@@ -46687,7 +46783,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeDensity
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 2222525388756593646}
   slider: {fileID: 9216980582489886214}
   input: {fileID: 5653744243968294584}
@@ -64037,7 +64145,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeColor
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 6633408038542521904}
   colorButton: {fileID: 5743264966396832145}
   colorPicker: {fileID: 6697394579907152706}
@@ -67579,7 +67699,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeColor
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 7537372053955389391}
   colorButton: {fileID: 636486210112985608}
   colorPicker: {fileID: 311555853816573573}
@@ -69099,7 +69231,19 @@ MonoBehaviour:
   m_Value: 0.1
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeSampleDistance
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &7399911847412654643
 GameObject:
   m_ObjectHideFlags: 0
@@ -72891,7 +73035,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8496189227971302856, guid: 36c3d85e447cd4f4f81bb48bc8a9229e, type: 3}
+        m_TargetAssemblyTypeName: _Project.UI.Scripts.Tutorial.TutorialManager, Assembly-CSharp
+        m_MethodName: CompleteTask
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: changeDensity
+          m_BoolArgument: 0
+        m_CallState: 2
   title: {fileID: 886754618689977691}
   slider: {fileID: 7817363392697305602}
   input: {fileID: 5213584665698491949}
