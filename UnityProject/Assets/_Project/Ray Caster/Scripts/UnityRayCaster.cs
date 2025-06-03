@@ -20,7 +20,7 @@ namespace _Project.Ray_Caster.Scripts
         private LinearInterpolation linearInterpolation;
 
         [SerializeField] private GameObject voxelGrid;
-        
+
         /// <summary>
         /// Whether to perform early ray termination
         /// </summary>
@@ -35,11 +35,11 @@ namespace _Project.Ray_Caster.Scripts
                 callRayTracerChanged();
             }
         }
-        
+
         /// <summary>
         /// The distance between the samples on a ray in unity space
         /// </summary>
-        [SerializeField] 
+        [SerializeField]
         private float distanceBetweenSamples = 0.1f;
         /// <summary>
         /// The maximum depth of any ray tree produced by this ray tracer.
@@ -54,7 +54,7 @@ namespace _Project.Ray_Caster.Scripts
                 callRayTracerChanged();
             }
         }
-        
+
         /// <summary>
         /// Hit information used for ray casting
         /// </summary>
@@ -67,7 +67,7 @@ namespace _Project.Ray_Caster.Scripts
             public readonly float DistanceInVoxelGrid;
             public readonly float DistanceAfterVoxelGrid;
             public readonly bool didHit;
-        
+
             public CasterHitInfo(ref RaycastHit hit1, ref RaycastHit hit2, bool didHit)
             {
                 if (didHit)
@@ -92,7 +92,7 @@ namespace _Project.Ray_Caster.Scripts
                 }
             }
         }
-        
+
         public override IEnumerator RenderImage()
         {
             AccelerationPrep();
@@ -106,7 +106,7 @@ namespace _Project.Ray_Caster.Scripts
             int scaleFactor = Mathf.RoundToInt(Mathf.Sqrt(160000f / (width * height)));
             width = scaleFactor * width;
             height = scaleFactor * height;
-            
+
             Renderer ren = voxelGrid.GetComponent<Renderer>();
             Shader previousShader = ren.material.shader;
             Shader raycast = Shader.Find("Unlit/Raycast");
@@ -114,31 +114,31 @@ namespace _Project.Ray_Caster.Scripts
             ren.material.SetInt("_DoDepthPerception", 0);
 
             if (camera.Cam.targetTexture != null)
-            { 
+            {
                 camera.Cam.targetTexture.Release();
             }
 
             RenderTexture renderTexture = new RenderTexture(width, height, 24);
             renderTexture.Create();
             camera.Cam.targetTexture = renderTexture;
-            
+
             camera.Cam.Render();
-            
+
             image = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGB24, false);
             RenderTexture.active = renderTexture;
             image.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
             image.Apply();
-            
+
             RenderTexture.active = null;
             camera.Cam.targetTexture = null;
             renderTexture.Release();
-            
+
             ren.material.shader = previousShader;
             ren.material.SetInt("_DoDepthPerception", 1);
-            
+
             yield return null;
         }
-        
+
         /// <summary>
         /// Render visualizable rays
         /// </summary>
@@ -150,7 +150,7 @@ namespace _Project.Ray_Caster.Scripts
             rtSceneManager = RTSceneManager.Get();
             scene = rtSceneManager.Scene;
             camera = scene.Camera;
-        
+
             int width = camera.ScreenWidth;
             int height = camera.ScreenHeight;
             float aspectRatio = (float)width / height;
@@ -162,49 +162,49 @@ namespace _Project.Ray_Caster.Scripts
             int ssSquared = ssFactor * ssFactor;
             Vector3 origin = camera.transform.position;
             float step = 1f / ssFactor;
-        
+
             // Trace a ray for each pixel. 
             for (int y = 0; y < height; ++y)
             {
                 for (int x = 0; x < width; ++x)
                 {
                     Color color = Color.black;
-        
+
                     // Set a base Ray with a zero-distance as the main ray of the pixel
                     float centerPixelX = -halfScreenWidth + pixelWidth * (x + 0.5f);
                     float centerPixelY = -halfScreenHeight + pixelHeight * (y + 0.5f);
                     Vector3 centerPixel = new Vector3(centerPixelX, centerPixelY, camera.ScreenDistance);
                     TreeNode<RTRay> rayTree = new TreeNode<RTRay>(new RCRay());
                     rayTree.Data = new RCRay(origin, centerPixel / centerPixel.magnitude, 0f, RTRay.RayType.Normal, 0, 0, 0, distanceBetweenSamples);
-        
+
                     for (int supY = 0; supY < ssFactor; supY++)
                     {
                         float pixelY = centerPixelY + pixelHeight * (step * (0.5f + supY) - 0.5f);
-        
+
                         for (int supX = 0; supX < ssFactor; supX++)
                         {
                             float pixelX = centerPixelX + pixelWidth * (step * (0.5f + supX) - 0.5f);
-        
+
                             // Create and rotate the pixel location. Note that the camera looks along the positive z-axis.
                             Vector3 pixel = new Vector3(pixelX, pixelY, camera.ScreenDistance);
                             pixel = camera.transform.rotation * pixel;
-        
+
                             // This is the distance between the pixel on the screen and the origin. We need this to compensate
                             // for the length of the returned RTRay. Since we have this factor we also use it to normalize this
                             // vector to make the code more efficient.
                             float pixelDistance = pixel.magnitude;
-        
+
                             // perform the ray casting
                             TreeNode<RTRay> subRayTree = CastVisualizableRay(origin + pixel, pixel / pixelDistance);
                             rayTree.AddChild(subRayTree);
                             color += subRayTree.Data.Color;
                         }
                     }
-        
+
                     // Divide by superSamplingFactorSquared and set alpha levels back to 1. It should always be 1!
                     color /= ssSquared;
                     color.a = 1.0f;
-                    
+
                     rayTree.Data.Color = color;
                     rayTrees.Add(rayTree);
                 }
@@ -212,7 +212,7 @@ namespace _Project.Ray_Caster.Scripts
             AccelerationCleanupTree();
             return rayTrees;
         }
-        
+
         /// <summary>
         /// Cast a ray for a single picture in a high resolution image
         /// </summary>
@@ -225,7 +225,7 @@ namespace _Project.Ray_Caster.Scripts
             RCRay ray = CastRay(origin, direction);
             return ClampColor(ray.Color);
         }
-        
+
         public new static UnityRayCaster Get()
         {
             return instance;
@@ -238,9 +238,9 @@ namespace _Project.Ray_Caster.Scripts
         /// <returns>The amount of samples that will fit in the given distance</returns>
         private int CalculateAmountOfSamples(float distance)
         {
-           return (int) (distance / distanceBetweenSamples);
+            return (int)(distance / distanceBetweenSamples);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -252,11 +252,11 @@ namespace _Project.Ray_Caster.Scripts
         {
             switch (amountOfSamples)
             {
-                case 0: 
-                case 1: 
+                case 0:
+                case 1:
                     return new Vector3(); // delta per sample will not be used
-                default: 
-                    return (direction * distance) / (amountOfSamples-1); // We take amountOfSamples-1 so the first and last point are on the edge of the volume
+                default:
+                    return (direction * distance) / (amountOfSamples - 1); // We take amountOfSamples-1 so the first and last point are on the edge of the volume
             }
         }
 
@@ -271,7 +271,7 @@ namespace _Project.Ray_Caster.Scripts
             CasterHitInfo hitInfo = GetCasterHitInfo(origin, direction);
             return CastRay(origin, direction, hitInfo);
         }
-        
+
         /// <summary>
         /// Cast a new ray
         /// </summary>
@@ -284,7 +284,7 @@ namespace _Project.Ray_Caster.Scripts
             int amountOfSamples = CalculateAmountOfSamples(hitInfo.DistanceInVoxelGrid);
             return CastRay(origin, direction, hitInfo, amountOfSamples);
         }
-        
+
         /// <summary>
         /// Cast a new ray
         /// </summary>
@@ -313,7 +313,7 @@ namespace _Project.Ray_Caster.Scripts
                 rcRay.AddSample(unityCoords, gridCoords, density);
                 if (doRayTermination && rcRay.earlyRayActivationIndex != -1)
                 {
-                    rcRay.DistanceInVoxelgrid = distanceBetweenSamples * (i+1);
+                    rcRay.DistanceInVoxelgrid = distanceBetweenSamples * (i + 1);
                     rcRay.DistanceAfterVoxelgrid = 0;
                     break;
                 }
@@ -341,9 +341,9 @@ namespace _Project.Ray_Caster.Scripts
             gridCoords += voxelGrid.Scale / 2;
             // Now that they both have the same rotation and their bottom left corners are at (0,0,0) we can scale them
             // so they are the same size
-            gridCoords.x = gridCoords.x / voxelGrid.Scale.x * (voxelGrid.SizeX-1); // First divide by the scale of the unity volume, then multiply by the scale of the grid
-            gridCoords.y = gridCoords.y / voxelGrid.Scale.y * (voxelGrid.SizeY-1);
-            gridCoords.z = gridCoords.z / voxelGrid.Scale.z * (voxelGrid.SizeZ-1);
+            gridCoords.x = gridCoords.x / voxelGrid.Scale.x * (voxelGrid.SizeX - 1); // First divide by the scale of the unity volume, then multiply by the scale of the grid
+            gridCoords.y = gridCoords.y / voxelGrid.Scale.y * (voxelGrid.SizeY - 1);
+            gridCoords.z = gridCoords.z / voxelGrid.Scale.z * (voxelGrid.SizeZ - 1);
             // Now we have the grid coordinates equivalent to the given unity coordinates
             return gridCoords;
         }
@@ -359,8 +359,8 @@ namespace _Project.Ray_Caster.Scripts
         private TreeNode<RTRay> CastVisualizableRay(Vector3 origin, Vector3 direction)
         {
             RCRay baseRay = CastRay(origin, direction);
-            
-            TreeNode<RTRay> nodeOne = new TreeNode<RTRay>(new RCRay(baseRay, 0 ));
+
+            TreeNode<RTRay> nodeOne = new TreeNode<RTRay>(new RCRay(baseRay, 0));
             TreeNode<RTRay> nodeTwo = new TreeNode<RTRay>(new RCRay(baseRay, 1));
             TreeNode<RTRay> nodeThree = new TreeNode<RTRay>(new RCRay(baseRay, 2));
             nodeTwo.AddChild(nodeThree);
@@ -384,10 +384,11 @@ namespace _Project.Ray_Caster.Scripts
             Physics.Raycast(hit1.point + direction * 0.001f, direction, out RaycastHit hit2, Mathf.Infinity, rayTracerLayer);
             return new CasterHitInfo(ref hit1, ref hit2, true);
         }
-        
+
         protected override void Awake()
         {
             base.Awake();
+            rayTracerLayer = LayerMask.GetMask("Voxel Grid");
             instance = this;
             linearInterpolation = new LinearInterpolation();
         }

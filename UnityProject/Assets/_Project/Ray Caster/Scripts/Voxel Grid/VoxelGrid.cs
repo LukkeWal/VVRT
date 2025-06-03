@@ -6,6 +6,7 @@ using System.Text;
 using _Project.Ray_Caster.Scripts.RC_Ray;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace _Project.Ray_Caster.Scripts.Voxel_Grid
 {
@@ -16,7 +17,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
     {
         private static VoxelGrid instance = null;
         private RayCasterManager rayCasterManager = null;
-        
+
         /// <summary>
         /// The grid containing the selected voxelgrids scalar data
         /// </summary>
@@ -27,7 +28,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
         public int SizeX = 100;
         public int SizeY = 100;
         public int SizeZ = 100;
-        
+
         /// <summary>
         /// The recommended transfer function for the selected voxel grid
         /// </summary>
@@ -53,13 +54,13 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                 selectedVoxelGrid = value;
             }
         }
-        
+
         // we remember previously generated voxel grids to speed up the game when the user is switching between grids
         private double[,,] buckyGrid = null;
         private double[,,] bunnyGrid = null;
         private double[,,] engineGrid = null;
         private double[,,] hazelnutGrid = null;
-        
+
         /// <summary>
         /// The available voxel grid types
         /// </summary>
@@ -155,7 +156,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                     break;
             }
         }
-        
+
         /// <summary>
         /// Whether the selected voxel grid is fully loaded
         /// </summary>
@@ -175,7 +176,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
             }
             return false;
         }
-        
+
         /// <summary>
         /// Set the dimensions for the selected voxel grid
         /// </summary>
@@ -263,47 +264,71 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
         /// <param name="type">The voxel grid type to load</param>
         private IEnumerator loadNewGrid(VoxelGridType type)
         {
-            // If we don't have a remembered grid we load the grid
-            // We load the path to the selected voxel grid
-            string path = "/";
+            string fileName = "";
             switch (type)
             {
                 case VoxelGridType.Bucky:
-                    path += "bucky32x32x32.raw";
+                    fileName = "bucky32x32x32.raw";
                     break;
                 case VoxelGridType.Bunny:
-                    path += "bunny512x512x361.raw";
+                    fileName = "bunny512x512x361.raw";
                     break;
                 case VoxelGridType.Hazelnut:
-                    path += "hnut256_uint.raw";
+                    fileName = "hnut256_uint.raw";
                     break;
                 case VoxelGridType.Engine:
-                    path += "engine256x256x256.raw";
+                    fileName = "engine256x256x256.raw";
                     break;
             }
-            
-            // And read the binary file
-            BinaryReader binReader = new BinaryReader(File.Open((Application.streamingAssetsPath + path), FileMode.Open));
+
+            string fullPath = Path.Combine(Application.streamingAssetsPath, fileName);
+            byte[] rawData = null;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+            UnityWebRequest www = UnityWebRequest.Get(fullPath);
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError("Failed to load voxel grid: " + www.error);
+                yield break;
+            }
+            rawData = www.downloadHandler.data;
+#else
+            if (!File.Exists(fullPath))
+            {
+                Debug.LogError("Voxel file not found at: " + fullPath);
+                yield break;
+            }
+            rawData = File.ReadAllBytes(fullPath);
+#endif
+
             Grid = new double[SizeX, SizeY, SizeZ];
+
+            int index = 0;
             for (int z = 0; z < SizeZ; z++)
             {
-                int percentage = (int) Math.Round(((float)  z) / ((float) SizeZ) * 100f);
-                loadVoxelGridProgressFill.GetComponent<RectTransform>().sizeDelta = 
+                int percentage = (int)Math.Round(((float)z) / SizeZ * 100f);
+                loadVoxelGridProgressFill.GetComponent<RectTransform>().sizeDelta =
                     new Vector2(progressBar.GetComponent<RectTransform>().rect.width / 100 * percentage, 0);
-                loadVoxelGridtaskProgress.text = percentage.ToString() + "%";
-                yield return null; // yield to update UI
+                loadVoxelGridtaskProgress.text = percentage + "%";
+                yield return null; // allow UI update
+
                 for (int y = 0; y < SizeY; y++)
                 {
                     for (int x = 0; x < SizeX; x++)
                     {
-                        Grid[x, y, z] = binReader.ReadByte();
-                        Grid[x, y, z] /= 255;
+                        if (index >= rawData.Length)
+                        {
+                            Debug.LogWarning("Raw file ended prematurely at index " + index);
+                            yield break;
+                        }
+
+                        Grid[x, y, z] = rawData[index++] / 255.0;
                     }
                 }
             }
-            binReader.Close();
-            
-            // And then we remember it so we can re-use it next time
+
             switch (type)
             {
                 case VoxelGridType.Bucky:
@@ -341,19 +366,19 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                 //set path of voxel grid and 3d texture for preview
                 case VoxelGridType.Bucky:
                     tex = Resources.Load<Texture>("3DTex/BuckyTex");
-                    ren.material.SetTexture("_MainTex",tex);
+                    ren.material.SetTexture("_MainTex", tex);
                     break;
                 case VoxelGridType.Bunny:
                     tex = Resources.Load<Texture>("3DTex/BunnyTex");
-                    ren.material.SetTexture("_MainTex",tex);
+                    ren.material.SetTexture("_MainTex", tex);
                     break;
                 case VoxelGridType.Hazelnut:
                     tex = Resources.Load<Texture>("3DTex/HazelTex");
-                    ren.material.SetTexture("_MainTex",tex);
+                    ren.material.SetTexture("_MainTex", tex);
                     break;
                 case VoxelGridType.Engine:
                     tex = Resources.Load<Texture>("3DTex/EngineTex");
-                    ren.material.SetTexture("_MainTex",tex);
+                    ren.material.SetTexture("_MainTex", tex);
                     break;
             }
         }
@@ -371,7 +396,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
             if (rayCasterManager != null)
                 rayCasterManager.ColorLookupTable = RecommendedColorLookupTable;
         }
-        
+
         /// <summary>
         /// The position of the visualized box's mesh
         /// </summary>
@@ -410,7 +435,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                 transform.localScale = value;
             }
         }
-        
+
         void Awake()
         {
             instance = this;

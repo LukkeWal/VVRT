@@ -54,10 +54,10 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Camera
         public Vector3 Position
         {
             get { return transform.position; }
-            set 
+            set
             {
                 if (value == transform.position) return;
-                transform.position = value; 
+                transform.position = value;
             }
         }
 
@@ -101,7 +101,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Camera
         public int ScreenWidth
         {
             get { return screenWidth; }
-            set 
+            set
             {
                 if (value == screenWidth) return;
                 screenWidth = value;
@@ -137,7 +137,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Camera
         public float ScreenDistance
         {
             get { return screenDistance; }
-            set 
+            set
             {
                 if (value == screenDistance) return;
                 screenDistance = value;
@@ -155,7 +155,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Camera
 
         private float aspectRatio;
         private float halfScreenHeight;
-    
+
         private LineRenderer frustumLine1;
         private LineRenderer frustumLine2;
         private LineRenderer frustumLine3;
@@ -182,6 +182,8 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Camera
 
             Recalculate();
             ResetColor();
+            Debug.Log("RT Camera: " + Camera.main.name);
+            Debug.Log("RT Camera: " + Camera.main.depth);
         }
 
         private void FixedUpdate()
@@ -226,9 +228,9 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Camera
 
             // The frustum lines end at the corners of the screen.
             Vector3 frustumLine1End = new Vector3(-aspectRatio * halfScreenHeight, -halfScreenHeight, ScreenDistance);
-            Vector3 frustumLine2End = new Vector3(-aspectRatio * halfScreenHeight,  halfScreenHeight, ScreenDistance);
-            Vector3 frustumLine3End = new Vector3( aspectRatio * halfScreenHeight,  halfScreenHeight, ScreenDistance);
-            Vector3 frustumLine4End = new Vector3( aspectRatio * halfScreenHeight, -halfScreenHeight, ScreenDistance);
+            Vector3 frustumLine2End = new Vector3(-aspectRatio * halfScreenHeight, halfScreenHeight, ScreenDistance);
+            Vector3 frustumLine3End = new Vector3(aspectRatio * halfScreenHeight, halfScreenHeight, ScreenDistance);
+            Vector3 frustumLine4End = new Vector3(aspectRatio * halfScreenHeight, -halfScreenHeight, ScreenDistance);
 
             // Transform the lines to match the camera's position and rotation.
             frustumLine1End = transform.rotation * frustumLine1End;

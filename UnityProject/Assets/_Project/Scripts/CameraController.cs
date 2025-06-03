@@ -15,7 +15,7 @@ namespace _Project.Scripts
         [SerializeField]
         private RectTransform inputBlocker;
         public bool InputBlockerHovered { get; set; }
-    
+
         public Transform Target;
         public float InitialDistance = 5.0f;
         public float MaxDistance = 25.0f;
@@ -33,13 +33,32 @@ namespace _Project.Scripts
         private float xDegrees = 0.0f;
         private float yDegrees = 0.0f;
         private float distance = 0.0f;
-    
+
         private bool zoom = false;
         private bool orbiting = false;
         private bool panning = false;
         private bool mode = false;
 
-        void Start() { Initialize(); }
+        void Start()
+        {
+            Initialize();
+#if UNITY_WEBGL
+            // When using WebGL the RTCamera was overriding the MainCamera in the ray casting level
+            // explicitly disabling all other cameras at the start fixed this bug
+            Debug.Log("Using WebGL: explicitly disabling all cameras except MainCamera");
+            Camera myCamera = GetComponent<Camera>();
+            foreach (Camera cam in Camera.allCameras)
+            {
+                if (cam != myCamera)
+                {
+                    Debug.Log("Disabling camera: " + cam.name);
+                    cam.enabled = false;
+                }
+            }
+
+            myCamera.enabled = true;
+#endif
+        }
 
         void OnEnable() { Initialize(); }
 
@@ -68,23 +87,24 @@ namespace _Project.Scripts
 
         public void SetCursor()
         {
-            if(zoom || panning || orbiting)
+            if (zoom || panning || orbiting)
                 return;
             GlobalManager.Get().SetCursor(CursorType.ModeCursor);
         }
 
         public void ResetCursor()
         {
-            if(zoom || panning || orbiting)
+            if (zoom || panning || orbiting)
                 return;
-        
+
             GlobalManager.Get().ResetCursor();
         }
 
         private void DisableBlocker()
         {
             GlobalManager globalSettings = GlobalManager.Get();
-            if(mode) {
+            if (mode)
+            {
                 globalSettings.SetCursor(CursorType.ModeCursor);
                 return;
             }
@@ -97,7 +117,7 @@ namespace _Project.Scripts
         {
             float xDistance = 0.0f;
             float yDistance = 0.0f;
-            
+
             // Grab the rotation of the camera so we can move in a pseudo local XY space.
             if (Input.GetMouseButton(2))
             {
@@ -180,7 +200,7 @@ namespace _Project.Scripts
             }
 
         }
-    
+
         private void OnlyOneInputPicker()
         {
 
@@ -189,7 +209,7 @@ namespace _Project.Scripts
                 inputBlocker.gameObject.SetActive(true);
                 mode = true;
             }
-        
+
             // If the user is zooming, orbiting or panning we calculate their position
 
             if (zoom)
@@ -210,7 +230,7 @@ namespace _Project.Scripts
                 OrbitingUpdate();
                 return;
             }
-        
+
             if (panning)
             {
                 PanningUpdate();
@@ -229,7 +249,7 @@ namespace _Project.Scripts
                 return;
 
             // The inputs are below this line
-        
+
             // If scrollWheel is used change zoom. This one is not exclusive.
             distance -= Input.GetAxis("Mouse ScrollWheel") * ZoomSpeed * Mathf.Abs(distance);
 
@@ -259,7 +279,7 @@ namespace _Project.Scripts
                     return;
                 }
             }
-        
+
             // If the middle mouse is pressed, or the arrow keys we activate panning.
             if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.LeftArrow) ||
                 Input.GetKeyDown(KeyCode.RightArrow) ||
@@ -309,7 +329,7 @@ namespace _Project.Scripts
         {
             if (flytocam)
                 return;
-        
+
             // If we are over the ui we don't allow the user to start any of these actions.
             OnlyOneInputPicker();
 

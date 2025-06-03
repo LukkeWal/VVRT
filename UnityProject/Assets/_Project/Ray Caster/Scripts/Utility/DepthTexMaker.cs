@@ -12,12 +12,13 @@ public class DepthTexMaker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Camera.main.depthTextureMode = DepthTextureMode.Depth;
+        Debug.Log("enabling DepthTextureMode.Depth");
+        Camera.main.depthTextureMode |= DepthTextureMode.Depth;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }
