@@ -32,7 +32,7 @@ The application is under active development. Additional features as well as soft
 
 [W.A. Verschoore de la Houssaije, C.S. van Wezel, S. Frey, and J. Kosinka: Virtual Ray Tracer, Eurographics 2022 Education Papers.](https://diglib.eg.org/handle/10.2312/eged20221045)
 
-[L. v.d. Wal, P. Blesinger, J. Kosinka , and S. Frey](https://diglib.eg.org/bitstream/handle/10.2312/eved20251021/eved20251021.pdf)
+[L. v.d. Wal, P. Blesinger, J. Kosinka , and S. Frey: VVRT: Virtual Volume Raycaster, Eurovis 2025 Education Papers.](https://diglib.eg.org/bitstream/handle/10.2312/eved20251021/eved20251021.pdf)
 
 ##### Theses:
 
