@@ -82,7 +82,7 @@ float Maximum(float dens, float newDens)
 
 float First(float dens, float newDens, float targetDens)
 {
-    float epsilon = 0.05;
+    float epsilon = 0.01;
     if (newDens <= targetDens + epsilon && newDens >= targetDens - epsilon)
     {
         dens = targetDens;
@@ -92,7 +92,7 @@ float First(float dens, float newDens, float targetDens)
 
 float4 First_lit(float4 color, float newDens, float targetDens, float3 samplePosition)
 {
-    float epsilon = 0.05;
+    float epsilon = 0.01;
     if (newDens <= targetDens + epsilon && newDens >= targetDens - epsilon)
     {
         color.a = targetDens;

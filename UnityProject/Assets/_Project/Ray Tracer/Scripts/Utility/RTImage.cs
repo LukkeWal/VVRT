@@ -330,9 +330,23 @@ namespace _Project.Ray_Tracer.Scripts.Utility
         /// </summary>
         private void UpdateTexture()
         {
+            // If either dimension is zero, don’t attempt to create a texture (avoids invalid parameters).
+            if (Width <= 0 || Height <= 0)
+            {
+                if (texture != null)
+                {
+                    Object.Destroy(texture);
+                    texture = null;
+                }
+                return;
+             }
             // Destroy the old texture to prevent a memory leak. Unity textures are apparently not garbage collected.
-            if (texture != null)
-                Object.Destroy(texture);
+            if (texture != null){
+                if (Application.isPlaying)
+                    Object.Destroy(texture);
+                else
+                    Object.DestroyImmediate(texture);
+            }
 
             texture = new Texture2D(Width, Height);
             texture.filterMode = FilterMode.Point;

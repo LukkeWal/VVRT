@@ -42,9 +42,9 @@ public class LinearInterpolation
         return line[lowerIndex].ColorAlpha * distanceToHigherSide + line[lowerIndex + 1].ColorAlpha * distanceToLowerSide;
     }
     
-    public double TriLinearInterpolation(Vector3 point, VoxelGrid voxelGrid)
+    public float TriLinearInterpolation(Vector3 point, VoxelGrid voxelGrid)
     {
-        double[,,] grid = voxelGrid.Grid;
+        float[,,] grid = voxelGrid.Grid;
         // Get the bottom left corner of the cube surrounding the point
         int x = point.x <= 0 ? 0 : (int)point.x;
         int y = point.y <= 0 ? 0 : (int)point.y;
@@ -59,13 +59,13 @@ public class LinearInterpolation
         yD = point.y - y;
         zD = point.z - z;
         // Interpolate the x so we are left with a plane
-        double[,] plane = new double[2, 2];
+        float[,] plane = new float[2, 2];
         plane[0, 0] = grid[x,y,z] * (1 - xD) + grid[x + 1,y,z] * xD;
         plane[0, 1] = grid[x,y,z+1] * (1 - xD) + grid[x + 1,y,z+1] * xD;
         plane[1, 0] = grid[x,y+1,z] * (1 - xD) + grid[x + 1,y+1,z] * xD;
         plane[1, 1] = grid[x,y+1,z+1] * (1 - xD) + grid[x + 1,y+1,z+1] * xD;
         // Interpolate the y so we are left with the z line
-        double[] line = new double[2];
+        float[] line = new float[2];
         line[0] = plane[0, 0] * (1 - yD) + plane[1, 0] * yD;
         line[1] = plane[0, 1] * (1 - yD) + plane[1, 1] * yD;
         // Interpolate the z so we are left with the final value

@@ -1,0 +1,2 @@
+1.0.:
+- zResponsive template for WebGL launches in the Unity Asset Store on May 2025!

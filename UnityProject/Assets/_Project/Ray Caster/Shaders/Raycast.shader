@@ -149,7 +149,14 @@ Shader "Unlit/Raycast"
                 float4 screenuv = ComputeScreenPos(i.pos);
                 float2 uv = screenuv.xy / screenuv.w;
                 float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture,uv);
-                float surfaceDepth = i.pos.z / i.pos.w;
+                float surfaceDepth = screenuv.z / screenuv.w; // NDC z ∈ [-1,1] on GL
+
+                
+                // only on GL/Vulkan style APIs is NDC.Z in [-1,1], we map it to the assumed [0,1]:
+                #if defined(SHADER_API_GLCORE)  || defined(SHADER_API_GLES) \
+                || defined(SHADER_API_GLES3)  || defined(SHADER_API_VULKAN)
+                    surfaceDepth = (surfaceDepth + 1.0) * 0.5;
+                #endif
                 float depthLength = max(LinearEyeDepth(depth) - LinearEyeDepth(surfaceDepth),0);
                 int stepsToDepth = depthLength / _StepSize;
             
@@ -172,7 +179,7 @@ Shader "Unlit/Raycast"
                     }
                     
                     // Accumulate color only within unit cube bounds
-                    if(max(abs(samplePosition.x), max(abs(samplePosition.y), abs(samplePosition.z))) < 1.5f + EPSILON)
+                    if(max(abs(samplePosition.x), max(abs(samplePosition.y), abs(samplePosition.z))) < 0.5f + EPSILON)
                     {
                         float sampledDens = tex3D(_MainTex, samplePosition + float3(0.5f, 0.5f, 0.5f)).a;
                         if(sampledDens >= _MinDensity)//skip samples under minAlpha

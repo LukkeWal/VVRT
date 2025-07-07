@@ -12,6 +12,7 @@ namespace _Project.Scripts
     /// </summary>
     public class CameraController : MonoBehaviour
     {
+        private int activeFingerId = -1;
         [SerializeField]
         private RectTransform inputBlocker;
         public bool InputBlockerHovered { get; set; }
@@ -41,18 +42,20 @@ namespace _Project.Scripts
 
         void Start()
         {
+            Input.multiTouchEnabled = true;
             Initialize();
 #if UNITY_WEBGL
             // When using WebGL the RTCamera was overriding the MainCamera in the ray casting level
-            // explicitly disabling all other cameras at the start fixed this bug
-            Debug.Log("Using WebGL: explicitly disabling all cameras except MainCamera");
+            Debug.Log("Using WebGL: explicitly disabling RT Camera since it overrides the main camera");
             Camera myCamera = GetComponent<Camera>();
             foreach (Camera cam in Camera.allCameras)
             {
                 if (cam != myCamera)
                 {
-                    Debug.Log("Disabling camera: " + cam.name);
-                    cam.enabled = false;
+                    if (cam.name == "RT Camera"){
+                        Debug.Log("disabling camera: " + cam.name);
+                        cam.enabled = false;
+                    }
                 }
             }
 
@@ -115,6 +118,15 @@ namespace _Project.Scripts
 
         private void PanningUpdate()
         {
+            if (activeFingerId != -1){
+                if(TouchPanningUpdate()){
+                    return;
+                } else{
+                    panning = false;
+                    DisableBlocker();
+                    activeFingerId = -1;
+                }
+            }
             float xDistance = 0.0f;
             float yDistance = 0.0f;
 
@@ -146,8 +158,11 @@ namespace _Project.Scripts
             Target.Translate(Vector3.up * (yDistance * PanSpeed * distance));
 
             if (!(Input.GetMouseButton(2) ||
-                  Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) ||
-                  Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow)))
+                  Input.GetKey(KeyCode.LeftArrow) || 
+                  Input.GetKey(KeyCode.RightArrow) ||
+                  Input.GetKey(KeyCode.UpArrow) || 
+                  Input.GetKey(KeyCode.DownArrow) ||
+                  (Input.touchCount == 1)))
             {
                 panning = false;
                 DisableBlocker();
@@ -156,6 +171,16 @@ namespace _Project.Scripts
 
         private void OrbitingUpdate()
         {
+            if(activeFingerId != -1){
+                if(TouchOrbitUpdate()){
+                    return;
+                } else{
+                    orbiting = false;
+                    activeFingerId = -1;
+                    DisableBlocker();
+                }
+            }
+
             float xDistance = 0.0f;
             float yDistance = 0.0f;
 
@@ -192,8 +217,10 @@ namespace _Project.Scripts
             transform.rotation = Quaternion.Lerp(transform.rotation, desiredRotation, 1.0f);
 
             if (!(Input.GetMouseButton(0) ||
-                  Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow) ||
-                  Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow)))
+                  Input.GetKey(KeyCode.LeftArrow) || 
+                  Input.GetKey(KeyCode.RightArrow) ||
+                  Input.GetKey(KeyCode.UpArrow) || 
+                  Input.GetKey(KeyCode.DownArrow)))
             {
                 orbiting = false;
                 DisableBlocker();
@@ -203,7 +230,6 @@ namespace _Project.Scripts
 
         private void OnlyOneInputPicker()
         {
-
             if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.LeftCommand))
             {
                 inputBlocker.gameObject.SetActive(true);
@@ -248,7 +274,7 @@ namespace _Project.Scripts
             if (EventSystem.current.IsPointerOverGameObject() && !InputBlockerHovered)
                 return;
 
-            // The inputs are below this line
+            // If they are not already in zoom, orbit or pan, we check if they want to start zoom, orbit or pan
 
             // If scrollWheel is used change zoom. This one is not exclusive.
             distance -= Input.GetAxis("Mouse ScrollWheel") * ZoomSpeed * Mathf.Abs(distance);
@@ -270,9 +296,11 @@ namespace _Project.Scripts
                 }
 
                 // The left mouse button or Arrow keys we activate orbiting.
-                if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.LeftArrow) ||
+                if (Input.GetMouseButtonDown(0) || 
+                    Input.GetKeyDown(KeyCode.LeftArrow) ||
                     Input.GetKeyDown(KeyCode.RightArrow) ||
-                    Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+                    Input.GetKeyDown(KeyCode.UpArrow) || 
+                    Input.GetKeyDown(KeyCode.DownArrow))
                 {
                     orbiting = true;
                     GlobalManager.Get().SetCursor(CursorType.RotateCursor);
@@ -280,15 +308,48 @@ namespace _Project.Scripts
                 }
             }
 
-            // If the middle mouse is pressed, or the arrow keys we activate panning.
-            if (Input.GetMouseButtonDown(2) || Input.GetKeyDown(KeyCode.LeftArrow) ||
+            // If the middle mouse is pressed, the arrow keys, we activate panning.
+            if (Input.GetMouseButtonDown(2) || 
+                Input.GetKeyDown(KeyCode.LeftArrow) ||
                 Input.GetKeyDown(KeyCode.RightArrow) ||
-                Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                inputBlocker.gameObject.SetActive(true);
-                panning = true;
-                GlobalManager.Get().SetCursor(CursorType.GrabCursor);
+                Input.GetKeyDown(KeyCode.UpArrow) || 
+                Input.GetKeyDown(KeyCode.DownArrow))
+                {
+                    inputBlocker.gameObject.SetActive(true);
+                    panning = true;
+                    GlobalManager.Get().SetCursor(CursorType.GrabCursor);
+                    return;
+                }
+
+            // We now get to touchscreen controlls
+            // If we have exactly 2 touches we zoom
+            if (Input.touchCount == 2){
+                PinchToZoom();
                 return;
+            }
+            // If we have exactly 1 touch
+            if (Input.touchCount == 1){
+                Touch t = Input.GetTouch(0); // collect information about the touch
+                // clicks on game objects are excluded
+                if(EventSystem.current.IsPointerOverGameObject(t.fingerId))
+                    return;
+                // if it is a double tap we orbit
+                if (t.phase == TouchPhase.Began && t.tapCount == 2)
+                {
+                    orbiting = true;
+                    activeFingerId = t.fingerId;
+                    inputBlocker.gameObject.SetActive(true);
+                    GlobalManager.Get().SetCursor(CursorType.RotateCursor);
+                    return;
+                }
+                // if it is not a double tap we pan
+                if(Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began){
+                    inputBlocker.gameObject.SetActive(true);
+                    panning = true;
+                    activeFingerId = t.fingerId;
+                    GlobalManager.Get().SetCursor(CursorType.GrabCursor);
+                    return;
+                }
             }
         }
 
@@ -323,6 +384,95 @@ namespace _Project.Scripts
                 else
                     FlyToRTCameraStep();
             }
+        }
+
+        private void PinchToZoom()
+        {
+            // grab the two touches
+            Touch t0 = Input.GetTouch(0);
+            Touch t1 = Input.GetTouch(1);
+
+            // their positions last frame
+            Vector2 prevPos0 = t0.position - t0.deltaPosition;
+            Vector2 prevPos1 = t1.position - t1.deltaPosition;
+
+            // compute previous vs. current distance between touches
+            float prevDeltaMag = (prevPos0 - prevPos1).magnitude;
+            float currDeltaMag = (t0.position  - t1.position ).magnitude;
+
+            // difference = how much the pinch has grown (positive = pinch close = zoom out)
+            float deltaMagDiff = prevDeltaMag - currDeltaMag;
+
+            // apply to your camera distance (tune the factor if needed)
+            distance += deltaMagDiff * ZoomSpeed * 0.01f;
+            OnZoomChanged?.Invoke();
+
+            // clamp immediately so you don’t over-zoom
+            distance = Mathf.Clamp(distance, MinDistance, MaxDistance);
+
+            // early out so you don’t also pan/orbit
+            transform.position = Target.position - (transform.rotation * Vector3.forward * distance);
+            return;
+        }
+
+        private bool TouchPanningUpdate()
+        {
+            float xDistance = 0.0f;
+            float yDistance = 0.0f;
+
+            if (Input.touchCount == 1) {
+                Touch t = Input.GetTouch(0);
+                if (t.phase == TouchPhase.Moved) {
+                    // deltaPosition is in screen pixels → scale to world-space pan
+                    xDistance = -t.deltaPosition.x * 0.001f;  // TODO: Tune this scaling!
+                    yDistance = -t.deltaPosition.y * 0.001f;
+                }
+            } else {
+                return false;
+            }
+
+            if (yDistance != 0f || xDistance != 0f)
+                onPanChanged?.Invoke();
+
+            // we pan by way of transforming the target in screen space.
+            // Grab the rotation of the camera so we can move in a pseudo local XY space.
+            Target.rotation = transform.rotation;
+            Target.Translate(Vector3.right * (xDistance * PanSpeed * distance));
+            Target.Translate(Vector3.up * (yDistance * PanSpeed * distance));
+            return true;
+        }
+
+        private bool TouchOrbitUpdate()
+        {
+            // find the touch by ID
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+                Touch t = Input.GetTouch(i);
+                if (t.fingerId == activeFingerId)
+                {
+                    if (t.phase == TouchPhase.Moved)
+                    {
+                        float xDelta =  t.deltaPosition.x * OrbitSpeed * Time.deltaTime;
+                        float yDelta = -t.deltaPosition.y * OrbitSpeed * Time.deltaTime;
+                        
+                        xDegrees += xDelta;
+                        yDegrees += yDelta;
+                        yDegrees = ClampAngle(yDegrees, YMinLimit, YMaxLimit);
+
+                        Quaternion desired = Quaternion.Euler(yDegrees, xDegrees, 0);
+                        transform.rotation = Quaternion.Lerp(transform.rotation, desired, 1.0f);
+
+                        OnOrbitChanged?.Invoke();
+                    }
+                    // when the user lifts that finger, end orbit
+                    if (t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled)
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
 
         void Update()

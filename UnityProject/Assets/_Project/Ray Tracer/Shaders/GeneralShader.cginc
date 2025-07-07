@@ -27,15 +27,21 @@ struct vertexInput
 
 // Vertex shader output that is the input of the fragment shader. For acceptable fields see:
 // http://wiki.unity3d.com/index.php?title=Shader_Code.
+struct v2f
+{
+    float4 pos : SV_POSITION;
+};
 
 // The vertex shader.
-float4 vert(vertexInput input) : SV_POSITION
+v2f vert(vertexInput input) : SV_POSITION
 {
-    return UnityObjectToClipPos(input.vertex);
+    v2f o;
+    o.pos = UnityObjectToClipPos(input.vertex);
+    return o;
 }
 
 // The fragment shader.
-float4 frag() : COLOR
+float4 frag(v2f i) : SV_Target
 {
     return float4(_Ambient * _Color.rgb, _Color.a);
 }

@@ -49,7 +49,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Light
             }
         }
 
-        [SerializeField, Range(0,1)]
+        [SerializeField, Range(0, 1)]
         protected float ambient;
         public float Ambient
         {
@@ -63,7 +63,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Light
             }
         }
 
-        [SerializeField, Range(0,1)]
+        [SerializeField, Range(0, 1)]
         protected float diffuse;
 
         public float Diffuse
@@ -78,7 +78,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Light
             }
         }
 
-        [SerializeField, Range(0,1)]
+        [SerializeField, Range(0, 1)]
         protected float specular;
 
         public float Specular
@@ -177,7 +177,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Light
 
         [SerializeField]
         protected Image label;
-        
+
         [SerializeField]
         protected Image outline;
 
@@ -211,6 +211,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Light
         protected virtual void Awake()
         {
             defaultOutline = outline.color;
+            UpdateLightData();
         }
 #if UNITY_EDITOR
         private void OnEnable()

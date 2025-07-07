@@ -309,7 +309,7 @@ namespace _Project.Ray_Caster.Scripts
             {
                 Vector3 unityCoords = hitInfo.Entry + (deltaPerSample * i);
                 Vector3 gridCoords = unityCoordsToGridCoords(unityCoords, voxelGrid);
-                double density = linearInterpolation.TriLinearInterpolation(gridCoords, voxelGrid);
+                float density = linearInterpolation.TriLinearInterpolation(gridCoords, voxelGrid);
                 rcRay.AddSample(unityCoords, gridCoords, density);
                 if (doRayTermination && rcRay.earlyRayActivationIndex != -1)
                 {

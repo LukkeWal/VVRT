@@ -21,7 +21,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
         /// <summary>
         /// The grid containing the selected voxelgrids scalar data
         /// </summary>
-        public double[,,] Grid;
+        public float[,,] Grid;
         /// <summary>
         /// Size of the voxel grid
         /// </summary>
@@ -56,10 +56,13 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
         }
 
         // we remember previously generated voxel grids to speed up the game when the user is switching between grids
-        private double[,,] buckyGrid = null;
-        private double[,,] bunnyGrid = null;
-        private double[,,] engineGrid = null;
-        private double[,,] hazelnutGrid = null;
+        private float[,,] buckyGrid = null;
+        private float[,,] bunnyGrid = null;
+        private float[,,] engineGrid = null;
+        private float[,,] hazelnutGrid = null;
+        private float[,,] headGrid = null;
+        private float[,,] torsoGrid = null;
+
 
         /// <summary>
         /// The available voxel grid types
@@ -69,7 +72,9 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
             Bucky,
             Bunny,
             Engine,
-            Hazelnut
+            Hazelnut,
+            Head,
+            Torso
         }
 
         /// <summary>
@@ -130,6 +135,30 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                     RecommendedColorLookupTable[3].ColorAlpha = new Color(1, 0, 0, 0.3f);
                     RecommendedColorLookupTable[4].ColorAlpha = new Color(0, 0, 1, 0.7f);
                     return RecommendedColorLookupTable;
+                case VoxelGridType.Head:
+                    RecommendedColorLookupTable[0].Density = 0.2f;
+                    RecommendedColorLookupTable[1].Density = 0.4f;
+                    RecommendedColorLookupTable[2].Density = 0.7f;
+                    RecommendedColorLookupTable[3].Density = 0.9f;
+                    RecommendedColorLookupTable[4].Density = 1.0f;
+                    RecommendedColorLookupTable[0].ColorAlpha = Color.clear;
+                    RecommendedColorLookupTable[1].ColorAlpha = new Color(0, 0, 0, 0.3f);
+                    RecommendedColorLookupTable[2].ColorAlpha = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+                    RecommendedColorLookupTable[3].ColorAlpha = new Color(1, 1, 1, 0.3f);
+                    RecommendedColorLookupTable[4].ColorAlpha = new Color(1, 1, 1, 0.3f);
+                    return RecommendedColorLookupTable;
+                case VoxelGridType.Torso:
+                    RecommendedColorLookupTable[0].Density = 0.2f;
+                    RecommendedColorLookupTable[1].Density = 0.21f;
+                    RecommendedColorLookupTable[2].Density = 0.4f;
+                    RecommendedColorLookupTable[3].Density = 0.44f;
+                    RecommendedColorLookupTable[4].Density = 1.0f;
+                    RecommendedColorLookupTable[0].ColorAlpha = Color.clear;
+                    RecommendedColorLookupTable[1].ColorAlpha = new Color(0, 0, 0, 0.2f);
+                    RecommendedColorLookupTable[2].ColorAlpha = new Color(0, 0, 0, 0.2f);
+                    RecommendedColorLookupTable[3].ColorAlpha = new Color(1, 1, 1, 0.3f);
+                    RecommendedColorLookupTable[4].ColorAlpha = new Color(1, 1, 1, 0.3f);
+                    return RecommendedColorLookupTable;
             }
             return null;
         }
@@ -154,6 +183,12 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                 case VoxelGridType.Hazelnut:
                     Rotation = new Vector3(0, 0, 0);
                     break;
+                case VoxelGridType.Head:
+                    Rotation = new Vector3(90, 180, 180); // have the face face the camera
+                    break;
+                case VoxelGridType.Torso:
+                    Rotation = new Vector3(270, 180, 0); // have the torso upright with its chest to the camera
+                    break;
             }
         }
 
@@ -173,6 +208,10 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                     return engineGrid != null;
                 case VoxelGridType.Hazelnut:
                     return hazelnutGrid != null;
+                case VoxelGridType.Head:
+                    return headGrid != null;
+                case VoxelGridType.Torso:
+                    return torsoGrid != null;
             }
             return false;
         }
@@ -204,6 +243,16 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                     SizeX = 256;
                     SizeY = 256;
                     SizeZ = 256;
+                    return;
+                case VoxelGridType.Head:
+                    SizeX = 256;
+                    SizeY = 256;
+                    SizeZ = 113;
+                    return;
+                case VoxelGridType.Torso:
+                    SizeX = 512;
+                    SizeY = 512;
+                    SizeZ = 189;
                     return;
             }
         }
@@ -254,6 +303,24 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                         return true;
                     }
                     break;
+                case VoxelGridType.Head:
+                    if (headGrid != null)
+                    {
+                        Grid = headGrid;
+                        if (rayCasterManager != null)
+                            rayCasterManager.ColorLookupTable = RecommendedColorLookupTable;
+                        return true;
+                    }
+                    break;
+                case VoxelGridType.Torso:
+                    if (torsoGrid != null)
+                    {
+                        Grid = torsoGrid;
+                        if (rayCasterManager != null)
+                            rayCasterManager.ColorLookupTable = RecommendedColorLookupTable;
+                        return true;
+                    }
+                    break;
             }
             return false;
         }
@@ -279,33 +346,42 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                 case VoxelGridType.Engine:
                     fileName = "engine256x256x256.raw";
                     break;
+                case VoxelGridType.Head:
+                    fileName = "cthead256x256x113.raw";
+                    break;
+                case VoxelGridType.Torso:
+                    fileName = "torso512x512x189.raw";
+                    break;
             }
 
             string fullPath = Path.Combine(Application.streamingAssetsPath, fileName);
-            byte[] rawData = null;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-            UnityWebRequest www = UnityWebRequest.Get(fullPath);
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
+            using (UnityWebRequest www = UnityWebRequest.Get(fullPath))
             {
-                Debug.LogError("Failed to load voxel grid: " + www.error);
-                yield break;
+                yield return www.SendWebRequest();
+
+                if (www.result != UnityWebRequest.Result.Success)
+                {
+                    Debug.LogError("Failed to load voxel grid: " + www.error);
+                    yield break;
+                }
+                byte[] data = www.downloadHandler.data;
+                MemoryStream mem = new MemoryStream(data);
+                binReader = new BinaryReader(mem);
             }
-            rawData = www.downloadHandler.data;
 #else
             if (!File.Exists(fullPath))
             {
                 Debug.LogError("Voxel file not found at: " + fullPath);
                 yield break;
             }
-            rawData = File.ReadAllBytes(fullPath);
+            BinaryReader binReader = new BinaryReader(File.Open(fullPath, FileMode.Open));
 #endif
 
-            Grid = new double[SizeX, SizeY, SizeZ];
-
-            int index = 0;
+            Grid = new float[SizeX, SizeY, SizeZ];
+            float minValue = 1;
+            float maxValue = 0;
             for (int z = 0; z < SizeZ; z++)
             {
                 int percentage = (int)Math.Round(((float)z) / SizeZ * 100f);
@@ -318,13 +394,44 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                 {
                     for (int x = 0; x < SizeX; x++)
                     {
-                        if (index >= rawData.Length)
+                        switch (type)
                         {
-                            Debug.LogWarning("Raw file ended prematurely at index " + index);
-                            yield break;
+                            case VoxelGridType.Bucky:// 8 bit raw files
+                            case VoxelGridType.Bunny:
+                            case VoxelGridType.Engine:
+                            case VoxelGridType.Hazelnut: 
+                                Grid[x, y, z] = binReader.ReadByte();
+                                Grid[x, y, z] /= 255;
+                                break;
+                            case VoxelGridType.Torso:// 16 bit raw file
+                                byte msb = binReader.ReadByte();  // most significant byte (big-endian)
+                                byte lsb = binReader.ReadByte();  // least significant byte
+                                ushort value = (ushort)((msb << 8) | lsb);
+                                Grid[x, y, z] = value / 65535f;
+                                break;
+                            case VoxelGridType.Head:
+                                ushort raw = binReader.ReadUInt16();
+                                Grid[x, y, z] = raw / 65535f;
+                                break;
+                        }
+                        // switch(type){
+                        //     case VoxelGridType.Torso:// 16 bit raw file
+                        //         Grid[x, y, z] = Grid[x, y, z] * 25;
+                        //         break;
+                        //     case VoxelGridType.Head:
+                        //         Grid[x, y, z] = Grid[x, y, z] * 20;
+                        //         break;
+                        // }
+                        if (Grid[x, y, z] > maxValue){
+                        maxValue = Grid[x, y, z];
+                        }
+                        if (Grid[x, y, z] < minValue){
+                            minValue = Grid[x, y, z];
                         }
 
-                        Grid[x, y, z] = rawData[index++] / 255.0;
+                        if (Grid[x, y, z] > 1.0f){
+                            Grid[x, y, z] = 1.0f;
+                        }
                     }
                 }
             }
@@ -342,6 +449,12 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                     break;
                 case VoxelGridType.Hazelnut:
                     hazelnutGrid = Grid;
+                    break;
+                case VoxelGridType.Head:
+                    headGrid = Grid;
+                    break;
+                case VoxelGridType.Torso:
+                    torsoGrid = Grid;
                     break;
             }
 
@@ -380,6 +493,14 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                     tex = Resources.Load<Texture>("3DTex/EngineTex");
                     ren.material.SetTexture("_MainTex", tex);
                     break;
+                case VoxelGridType.Head:
+                    tex = Resources.Load<Texture>("3DTex/HeadTex");
+                    ren.material.SetTexture("_MainTex", tex);
+                    break;
+                case VoxelGridType.Torso:
+                    tex = Resources.Load<Texture>("3DTex/TorsoTex");
+                    ren.material.SetTexture("_MainTex", tex);
+                    break;
             }
         }
 
@@ -389,10 +510,11 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
         /// <param name="type">The new voxel grid type</param>
         public IEnumerator setVoxelGrid(VoxelGridType type)
         {
-            RecommendedColorLookupTable = getReccomendedColorLookupTable(type);
-            setReccommendedRotation(type);
+
             setGridSizes(type);
             yield return loadGrid(type);
+            RecommendedColorLookupTable = getReccomendedColorLookupTable(type);
+            setReccommendedRotation(type);
             if (rayCasterManager != null)
                 rayCasterManager.ColorLookupTable = RecommendedColorLookupTable;
         }

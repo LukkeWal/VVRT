@@ -152,7 +152,7 @@ namespace _Project.UI.Scripts.Control_Panel
         {
             renderShadowsEdit.OnValueChanged.AddListener((value) => { RTSceneManager.Get().SetShadows(value); });
         }
-        
+
         protected virtual void Awake()
         {
             renderShadowsEdit.OnValueChanged.AddListener((value) => { rayTracer.RenderShadows = value; });
@@ -184,9 +184,9 @@ namespace _Project.UI.Scripts.Control_Panel
             renderImageButton.onClick.AddListener(RenderImage);
             openImageButton.onClick.AddListener(ToggleImage);
             flyRoRTCameraButton.onClick.AddListener(() =>
-            { 
+            {
                 showRaysEdit.IsOn = false; // This invokes the OnValueChanged event as well.
-                FindObjectOfType<CameraController>().FlyToRTCamera(); // There should only be 1 CamerController.
+                FindFirstObjectByType<CameraController>().FlyToRTCamera(); // There should only be 1 CamerController.
             });
         }
     }

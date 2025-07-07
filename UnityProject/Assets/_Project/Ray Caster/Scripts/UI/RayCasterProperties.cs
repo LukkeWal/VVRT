@@ -19,7 +19,7 @@ public class RayCasterProperties : RayTracerProperties
     private UnityRayCaster unityRayCaster;
     private Renderer ren;
     private float unitsPerVoxel;
-    
+
     /// <summary>
     /// Toggle GPU preview
     /// </summary>
@@ -60,7 +60,7 @@ public class RayCasterProperties : RayTracerProperties
     /// Allows users to enable or disable lighting in the Raycaster shader
     /// </summary>
     [SerializeField] private BoolEdit doLighting;
-    
+
     /// <summary>
     /// Allow users to edit the <see cref="RayCasterManager.ColorLookupTable"/>
     /// </summary>
@@ -86,6 +86,8 @@ public class RayCasterProperties : RayTracerProperties
     [SerializeField] private Sprite bunnyHistogram;
     [SerializeField] private Sprite engineHistogram;
     [SerializeField] private Sprite hazelnutHistogram;
+    [SerializeField] private Sprite headHistogram;
+    [SerializeField] private Sprite torsoHistogram;
 
     /// <summary>
     /// Shows the ray caster control panel
@@ -109,7 +111,7 @@ public class RayCasterProperties : RayTracerProperties
         doRayTermination.IsOn = unityRayCaster.DoRayTermination;
         doLighting.IsOn = ren.material.GetInt("_DoLighting") != 0;
     }
-    
+
     protected override void Awake()
     {
         base.Awake();
@@ -117,7 +119,7 @@ public class RayCasterProperties : RayTracerProperties
         // Without having an option to re-enable them
         flyRoRTCameraButton.onClick.RemoveAllListeners();
         // Then we add back the functionality that we do want
-        
+
         showPreview.OnValueChanged.AddListener((value) =>
         {
             rayCasterManager.ShowPreview = value;
@@ -132,22 +134,22 @@ public class RayCasterProperties : RayTracerProperties
                 ren.material.shader = plain;
             }
         });
-        
+
         flyRoRTCameraButton.onClick.AddListener(() =>
-        { 
-            FindObjectOfType<CameraController>().FlyToRTCamera(); // There should only be 1 CamerController.
+        {
+            FindFirstObjectByType<CameraController>().FlyToRTCamera(); // There should only be 1 CamerController.
         });
-        
+
         distanceBetweenSamplesEdit.OnValueChanged.AddListener((value) =>
         {
             // float steps =  value * unitsPerVoxel;
-            
-            
-            unityRayCaster.DistanceBetweenSamples = value*unitsPerVoxel;
-            ren.material.SetFloat("_StepSize", value*unitsPerVoxel);
+
+
+            unityRayCaster.DistanceBetweenSamples = value * unitsPerVoxel;
+            ren.material.SetFloat("_StepSize", value * unitsPerVoxel);
         });
-        VoxelGridDropdown.onValueChanged.AddListener( type => StartCoroutine(VoxelGridChanged((VoxelGrid.VoxelGridType) type)));
-        CompositingMethodDropdown.onValueChanged.AddListener( type =>
+        VoxelGridDropdown.onValueChanged.AddListener(type => StartCoroutine(VoxelGridChanged((VoxelGrid.VoxelGridType)type)));
+        CompositingMethodDropdown.onValueChanged.AddListener(type =>
         {
             ren.material.SetInt("_CompositingFunction", type);
             CompositingMethodChanged((RCRay.CompositingMethodType)type);
@@ -165,13 +167,13 @@ public class RayCasterProperties : RayTracerProperties
         showOpacity.OnValueChanged.AddListener(value => rayCasterManager.ShowOpacity = value);
         doRayTermination.OnValueChanged.AddListener(value => unityRayCaster.DoRayTermination = value);
         doLighting.OnValueChanged.AddListener(value => ChangeLighting(value));
-        
+
         density1.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
         density2.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
         density3.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
         density4.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
         density5.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
-        
+
         color1.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
         color2.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
         color3.OnValueChanged.AddListener(value => rayCasterManager.ColorLookupTable = colorLookupTableChanged());
@@ -190,14 +192,14 @@ public class RayCasterProperties : RayTracerProperties
             ren.material.SetInt("_DoLighting", 0);
         }
     }
-    
+
     protected override void RenderImage()
     {
         uiManager.RenderedImageWindow.Show();
         uiManager.RenderedImageWindow.SetLoading();
         StartCoroutine(RunRenderImage());
     }
-    
+
     /// <summary>
     /// Get the changed color lookup table when a value in the transfer function is changed
     /// </summary>
@@ -225,19 +227,19 @@ public class RayCasterProperties : RayTracerProperties
         result[2] = new RCRay.ColorTableEntry(color3.Color, density3.Value);
         result[3] = new RCRay.ColorTableEntry(color4.Color, density4.Value);
         result[4] = new RCRay.ColorTableEntry(color5.Color, density5.Value);
-        
+
         //update preview transfer function
-        ren.material.SetFloat("_Transfer1",density1.Value);
-        ren.material.SetFloat("_Transfer2",density2.Value);
-        ren.material.SetFloat("_Transfer3",density3.Value);
-        ren.material.SetFloat("_Transfer4",density4.Value);
-        ren.material.SetFloat("_Transfer5",density5.Value);
-        ren.material.SetColor("_Transfer1c",color1.Color);
-        ren.material.SetColor("_Transfer2c",color2.Color);
-        ren.material.SetColor("_Transfer3c",color3.Color);
-        ren.material.SetColor("_Transfer4c",color4.Color);
-        ren.material.SetColor("_Transfer5c",color5.Color);
-        
+        ren.material.SetFloat("_Transfer1", density1.Value);
+        ren.material.SetFloat("_Transfer2", density2.Value);
+        ren.material.SetFloat("_Transfer3", density3.Value);
+        ren.material.SetFloat("_Transfer4", density4.Value);
+        ren.material.SetFloat("_Transfer5", density5.Value);
+        ren.material.SetColor("_Transfer1c", color1.Color);
+        ren.material.SetColor("_Transfer2c", color2.Color);
+        ren.material.SetColor("_Transfer3c", color3.Color);
+        ren.material.SetColor("_Transfer4c", color4.Color);
+        ren.material.SetColor("_Transfer5c", color5.Color);
+
         return result;
     }
 
@@ -258,25 +260,31 @@ public class RayCasterProperties : RayTracerProperties
         setDisplayedColorLookupTalbe(voxelGrid.RecommendedColorLookupTable);
         setVoxelDens(type);
         float sampleDistance = distanceBetweenSamplesEdit.Value;
-        unityRayCaster.DistanceBetweenSamples = sampleDistance*unitsPerVoxel;
-        ren.material.SetFloat("_StepSize", sampleDistance*unitsPerVoxel);
+        unityRayCaster.DistanceBetweenSamples = sampleDistance * unitsPerVoxel;
+        ren.material.SetFloat("_StepSize", sampleDistance * unitsPerVoxel);
     }
-    
+
     private void setVoxelDens(VoxelGrid.VoxelGridType type)
     {
         switch (type)
         {
             case VoxelGrid.VoxelGridType.Bucky:
-                unitsPerVoxel = 3.0f/32;
+                unitsPerVoxel = 3.0f / 32;
                 break;
             case VoxelGrid.VoxelGridType.Bunny:
-                unitsPerVoxel = 3.0f/512;
+                unitsPerVoxel = 3.0f / 512;
                 break;
             case VoxelGrid.VoxelGridType.Engine:
-                unitsPerVoxel = 3.0f/256;
+                unitsPerVoxel = 3.0f / 256;
                 break;
             case VoxelGrid.VoxelGridType.Hazelnut:
-                unitsPerVoxel = 3.0f/256;
+                unitsPerVoxel = 3.0f / 256;
+                break;
+            case VoxelGrid.VoxelGridType.Head:
+                unitsPerVoxel = 3.0f / 256;
+                break;
+            case VoxelGrid.VoxelGridType.Torso:
+                unitsPerVoxel = 3.0f / 512;
                 break;
         }
     }
@@ -329,6 +337,13 @@ public class RayCasterProperties : RayTracerProperties
             case VoxelGrid.VoxelGridType.Hazelnut:
                 histogramImage.GetComponent<Image>().sprite = hazelnutHistogram;
                 break;
+            case VoxelGrid.VoxelGridType.Head:
+                histogramImage.GetComponent<Image>().sprite = headHistogram;
+                break;
+            case VoxelGrid.VoxelGridType.Torso:
+                histogramImage.GetComponent<Image>().sprite = torsoHistogram;
+                break;
+
         }
     }
 
@@ -343,7 +358,7 @@ public class RayCasterProperties : RayTracerProperties
         density3.Value = colorLookupTable[2].Density;
         density4.Value = colorLookupTable[3].Density;
         density5.Value = colorLookupTable[4].Density;
-        
+
         color1.Color = colorLookupTable[0].ColorAlpha;
         color2.Color = colorLookupTable[1].ColorAlpha;
         color3.Color = colorLookupTable[2].ColorAlpha;

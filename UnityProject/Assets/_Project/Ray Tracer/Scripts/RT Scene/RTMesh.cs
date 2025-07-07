@@ -32,7 +32,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene
         /// <summary>
         /// An event invoked whenever a property of this mesh is changed.
         /// </summary>
-        public MeshChanged OnMeshChanged, OnMeshColorChanged, OnAmbientChanged, OnDiffuseChanged, 
+        public MeshChanged OnMeshChanged, OnMeshColorChanged, OnAmbientChanged, OnDiffuseChanged,
             OnSpecularChanged, OnShininessChanged, OnRefractiveIndexChanged, OnMaterialTypeChanged;
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene
         /// <summary>
         /// Whether the mesh is transparent a mirror or just opaque.
         /// </summary>
-        [SerializeField] 
+        [SerializeField]
         public ObjectType Type;
 
         [SerializeField]
@@ -202,8 +202,8 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene
         public bool ShadeSmooth
         {
             get => shadeSmooth;
-            private set 
-            { 
+            private set
+            {
                 if (value == shadeSmooth) return;
                 shadeSmooth = value;
                 OnMeshChanged?.Invoke();
@@ -278,14 +278,14 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene
             GetComponent<Renderer>().shadowCastingMode = ShadowCastingMode.TwoSided;
             // Find the material used by this object and verify that it uses the correct shader.
             Material = GetComponent<MeshRenderer>().material;
-            
-            Type = Material.name.Replace("(Instance)","").Trim()  switch
+
+            Type = Material.name.Replace("(Instance)", "").Trim() switch
             {
                 "Glass" => ObjectType.Transparent,
                 "Mirror" => ObjectType.Mirror,
                 _ => ObjectType.Opaque
             };
-            
+
             if (Material == null)
                 Debug.LogError("Could not find material of " + gameObject.name + "!");
             if (Type == ObjectType.Transparent && Material.shader != TransparentShader)

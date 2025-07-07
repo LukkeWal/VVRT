@@ -58,7 +58,7 @@ namespace _Project.Ray_Tracer.Scripts
 
         [Header("Gizmos")]
         [SerializeField] private RuntimeTransformHandle transformHandle;
-        
+
         [SerializeField] private float translationSnap = 0.0f;
         [SerializeField] private float rotationSnap = 0.0f;
         [SerializeField] private float scaleSnap = 0.0f;
@@ -66,7 +66,7 @@ namespace _Project.Ray_Tracer.Scripts
         [Header("Objects")]
         [SerializeField] private bool deleteAllowed = false;
         [SerializeField, Range(0, 12)] private int pointSpotLightLimit = 12;
-        [SerializeField, Range(0,  5)] private int areaLightLimit = 5;
+        [SerializeField, Range(0, 5)] private int areaLightLimit = 5;
         public bool DeleteAllowed { get => deleteAllowed; }
         public int PointSpotLightLimit { get => pointSpotLightLimit; }
         public int AreaLightLimit { get => areaLightLimit; }
@@ -80,7 +80,7 @@ namespace _Project.Ray_Tracer.Scripts
         private Transform previousTransform;
 
         private HandleSpace handleSpace = HandleSpace.WORLD;
-        
+
         /// <summary>
         /// The object type. 
         /// The value represents the amount of points to unlock the object in sandbox mode.
@@ -170,7 +170,7 @@ namespace _Project.Ray_Tracer.Scripts
             /// The <see cref="RTMesh"/> component attached to the selected object. Will be <c>null</c> if there is
             /// none.
             /// </summary>
-            public RTMesh Mesh 
+            public RTMesh Mesh
             {
                 get
                 {
@@ -187,7 +187,7 @@ namespace _Project.Ray_Tracer.Scripts
                     Empty = false;
                 }
             }
-            
+
             /// <summary>
             /// A selection is empty if an object is selected that has no <see cref="RTCamera"/>, <see cref="RTLight"/>
             /// or <see cref="RTMesh"/> component attached. <see cref="Transform"/> does not have to be <c>null</c> for
@@ -270,19 +270,19 @@ namespace _Project.Ray_Tracer.Scripts
             transformHandle.gameObject.SetActive(true);
             UIManager.Get().AddEscapable(DeselectAndInvoke);
         }
-        
+
         public bool HasSelection()
         {
             return !selection.Empty;
         }
-        
+
         /// <summary>
         /// Deselect the currently selected object. Nothing is done if no object is selected.
         /// </summary>
         public void Deselect()
         {
             ControlPanel.ShowRayTracerProperties();
-            
+
             if (selection.Empty)
                 return;
 
@@ -325,14 +325,14 @@ namespace _Project.Ray_Tracer.Scripts
                 Scene.RemoveLight(selection.Light);
             else if (selection.Type == typeof(RTMesh))
                 Scene.RemoveMesh(selection.Mesh);
-            
+
             // Create a local reference
             GameObject gameObject = selection.Transform.gameObject;
-            
+
             // Remove all connections
             previousTransform = null;
             Deselect();
-            
+
             // Destroy
 #if UNITY_EDITOR
             DestroyImmediate(gameObject);
@@ -394,7 +394,7 @@ namespace _Project.Ray_Tracer.Scripts
                     mesh = Instantiate(capsulePrefab);
                     break;
                 case ObjectType.Goat:
-                     mesh = Instantiate(goatPrefab);
+                    mesh = Instantiate(goatPrefab);
                     break;
                 case ObjectType.Prism:
                     mesh = Instantiate(prismPrefab);
@@ -437,11 +437,11 @@ namespace _Project.Ray_Tracer.Scripts
                 return result;
 
             result.Transform = selection;
-            
+
             // Try to get camera, light and mesh components from the selected object.
             result.Camera = selection.GetComponent<RTCamera>();
             if (!result.Empty) return result;
-           
+
             result.Light = selection.GetComponent<RTPointLight>();
             if (!result.Empty) return result;
 
@@ -453,10 +453,10 @@ namespace _Project.Ray_Tracer.Scripts
 
             result.Mesh = selection.GetComponent<RTMesh>();
             if (!result.Empty) return result;
-            
+
             return result;
         }
-        
+
         private void SetHandleType(HandleType type)
         {
             // Cameras should not be scaled and lights should not be scaled or rotated. We default to translation.
@@ -504,7 +504,7 @@ namespace _Project.Ray_Tracer.Scripts
 
             if (space == HandleSpace.LOCAL)
                 OnLocalSpace?.Invoke();
-            else 
+            else
                 OnGlobalSpace?.Invoke();
 
             if (HandleSpaceDropdown.value != (int)space)
@@ -538,7 +538,7 @@ namespace _Project.Ray_Tracer.Scripts
         public void SetShadows(bool value)
         {
             LightShadows shadowType = value ? LightShadows.Hard : LightShadows.None;
-            foreach (var sceneLight in Scene.PointLights) 
+            foreach (var sceneLight in Scene.PointLights)
                 sceneLight.Shadows = shadowType;
             foreach (var sceneLight in Scene.SpotLights)
                 sceneLight.Shadows = shadowType;
@@ -559,11 +559,22 @@ namespace _Project.Ray_Tracer.Scripts
             HandleSpaceDropdown.onValueChanged.AddListener(space => SetHandleSpace((HandleSpace)space));
 
             // Find the first camera and all lights and meshes in the Unity scene.
-            RTCamera camera = FindObjectOfType<RTCamera>();
-            List<RTPointLight> pointLights = new List<RTPointLight>(FindObjectsOfType<RTPointLight>());
-            List<RTSpotLight> spotLights = new List<RTSpotLight>(FindObjectsOfType<RTSpotLight>());
-            List<RTAreaLight> areaLights = new List<RTAreaLight>(FindObjectsOfType<RTAreaLight>());
-            List<RTMesh> meshes = new List<RTMesh>(FindObjectsOfType<RTMesh>());
+            RTCamera camera = FindFirstObjectByType<RTCamera>();
+            List<RTPointLight> pointLights = new List<RTPointLight>(
+                FindObjectsByType<RTPointLight>(FindObjectsSortMode.None)
+            );
+
+            List<RTSpotLight> spotLights = new List<RTSpotLight>(
+                FindObjectsByType<RTSpotLight>(FindObjectsSortMode.None)
+            );
+
+            List<RTAreaLight> areaLights = new List<RTAreaLight>(
+                FindObjectsByType<RTAreaLight>(FindObjectsSortMode.None)
+            );
+
+            List<RTMesh> meshes = new List<RTMesh>(
+                FindObjectsByType<RTMesh>(FindObjectsSortMode.None)
+            );
 
             // Construct the ray tracer scene with the found objects.
             Scene = new RTScene(camera, pointLights, spotLights, areaLights, meshes);
@@ -574,11 +585,11 @@ namespace _Project.Ray_Tracer.Scripts
             ControlPanel.Subscribe(OnEvent);
         }
 
-        
+
         // Check whether we are clicking on a transformation handle.
         private void OnLeftClick()
         {
-            
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             // If we hit a handle we do nothing
@@ -595,14 +606,14 @@ namespace _Project.Ray_Tracer.Scripts
             // If nothing was hit deselect all.
             DeselectAndInvoke();
         }
-        
+
         private void Update()
         {
             // Check if we clicked on anything (unless we are hovered over or in UI, or orbiting the camera).
             bool inUI = EventSystem.current.IsPointerOverGameObject();
             if (Input.GetMouseButtonDown(0) && !inUI)
                 OnLeftClick();
-            
+
             // Handle transformation type hot keys.
             if (Input.GetKeyDown(KeyCode.T))
                 SetHandleType(HandleType.POSITION);
@@ -633,7 +644,7 @@ namespace _Project.Ray_Tracer.Scripts
                 transformHandle.rotationSnap = 0.0f;
                 transformHandle.scaleSnap = new Vector3(0.0f, 0.0f, 0.0f);
             }
-            
+
             // Delete object key.
             if (Input.GetKeyDown(KeyCode.Delete))
                 DeleteSelected();

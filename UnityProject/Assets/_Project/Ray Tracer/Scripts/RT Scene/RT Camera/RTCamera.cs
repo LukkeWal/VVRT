@@ -182,8 +182,6 @@ namespace _Project.Ray_Tracer.Scripts.RT_Scene.RT_Camera
 
             Recalculate();
             ResetColor();
-            Debug.Log("RT Camera: " + Camera.main.name);
-            Debug.Log("RT Camera: " + Camera.main.depth);
         }
 
         private void FixedUpdate()

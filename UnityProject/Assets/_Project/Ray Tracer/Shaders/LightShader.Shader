@@ -114,8 +114,9 @@ Shader "Custom/LightShader"
                 ambDifSpecAngle.x = fmod(ambDifSpecAngle.x, 2);
 
                 float diffuseStrength = max(0.0, dot(light, normal));
-                 // return black if the angle is >= 90 degrees between the normal and the light vector.
+                // return black if the angle is >= 90 degrees between the normal and the light vector.
                 if (diffuseStrength <= 0.0) return float4(0,0,0,0);
+
 
                 float specularStrength = pow(max(0.0, dot(reflect(-light, normal), view)), _Shininess);                
                 // lightDistanceAttenuation bool is packed in with specular. If its bigger than 1, it's enabled. Added 2 to not interfere.
@@ -128,11 +129,11 @@ Shader "Custom/LightShader"
                 float4 lightInfo  = unpackData4(_LightColor0.r, _LightColor0.g);
                 float3 lightColor = lightInfo.xyz;
                 float  intensity  = lightInfo.w * 30; // Intensity range is set to 0 - 30 but packed as 0 - 1.
+                
 
                 float3 ambientColor  = ambDifSpecAngle.x * lightColor * _Color.rgb;
                 float3 diffuseColor  = ambDifSpecAngle.y * lightColor * _Color.rgb * diffuseStrength  * _Diffuse;
                 float3 specularColor = ambDifSpecAngle.z * lightColor * _Color.rgb * specularStrength * _Specular;
-
                 float3 result = diffuseColor + specularColor; // Add ambient at the end, as it's immune to attenuation
 
 #ifdef SPOT     // Spotlight attenuation
