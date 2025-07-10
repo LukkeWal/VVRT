@@ -70,11 +70,11 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
         public enum VoxelGridType
         {
             Bucky,
-            Bunny,
             Engine,
             Hazelnut,
             Head,
-            Torso
+            Torso,
+            Bunny
         }
 
         /// <summary>
@@ -355,7 +355,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
             }
 
             string fullPath = Path.Combine(Application.streamingAssetsPath, fileName);
-
+            BinaryReader binReader;
 #if UNITY_WEBGL && !UNITY_EDITOR
             using (UnityWebRequest www = UnityWebRequest.Get(fullPath))
             {
@@ -376,7 +376,7 @@ namespace _Project.Ray_Caster.Scripts.Voxel_Grid
                 Debug.LogError("Voxel file not found at: " + fullPath);
                 yield break;
             }
-            BinaryReader binReader = new BinaryReader(File.Open(fullPath, FileMode.Open));
+            binReader = new BinaryReader(File.Open(fullPath, FileMode.Open));
 #endif
 
             Grid = new float[SizeX, SizeY, SizeZ];

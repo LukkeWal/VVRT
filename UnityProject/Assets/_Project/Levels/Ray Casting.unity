@@ -222,7 +222,7 @@ PrefabInstance:
       objectReference: {fileID: 626914429}
     - target: {fileID: 449513435735025005, guid: 04f8578c13b3b7847a028877bcbb44a1, type: 3}
       propertyPath: selectedVoxelGrid
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 449513435735025005, guid: 04f8578c13b3b7847a028877bcbb44a1, type: 3}
       propertyPath: loadingVoxelGridWindow

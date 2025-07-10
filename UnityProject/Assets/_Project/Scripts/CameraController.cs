@@ -13,6 +13,10 @@ namespace _Project.Scripts
     public class CameraController : MonoBehaviour
     {
         private int activeFingerId = -1;
+        private float lastTapTimestamp = -1f;
+        private Vector2 lastTapPos;
+        const float MaxTapInterval = 0.3f;      // seconds
+        const float MaxTapMoveSqr   = 200f*200f;  // pixels²
         [SerializeField]
         private RectTransform inputBlocker;
         public bool InputBlockerHovered { get; set; }
@@ -39,6 +43,43 @@ namespace _Project.Scripts
         private bool orbiting = false;
         private bool panning = false;
         private bool mode = false;
+
+        bool IsTouchOverHandle()
+        {
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+                Touch t = Input.GetTouch(i);
+                Ray ray = Camera.main.ScreenPointToRay(t.position);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, LayerMask.GetMask("Gizmos")))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool IsDoubleTap(Touch t){
+            float now = Time.time;
+            Vector2 pos = t.position;
+            if (lastTapTimestamp < 0.0f){
+                lastTapTimestamp = now;
+                lastTapPos = pos;
+                return false;
+            }
+            float dt = now - lastTapTimestamp;
+            float dist2 = (pos - lastTapPos).sqrMagnitude;
+            if (dt <= MaxTapInterval && dist2 <= MaxTapMoveSqr)
+            {
+                lastTapTimestamp = now;
+                lastTapPos = pos;
+                return true;
+            }
+            lastTapTimestamp = now;
+            lastTapPos = pos;
+            return false;
+
+        }
 
         void Start()
         {
@@ -125,6 +166,8 @@ namespace _Project.Scripts
                     panning = false;
                     DisableBlocker();
                     activeFingerId = -1;
+                    //Debug.Log("Stopped panning through touch");
+                    return;
                 }
             }
             float xDistance = 0.0f;
@@ -230,7 +273,7 @@ namespace _Project.Scripts
 
         private void OnlyOneInputPicker()
         {
-            if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.LeftCommand))
+            if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.LeftCommand) || IsTouchOverHandle())
             {
                 inputBlocker.gameObject.SetActive(true);
                 mode = true;
@@ -263,7 +306,7 @@ namespace _Project.Scripts
                 return;
             }
 
-            if (mode && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftCommand)))
+            if (mode && !(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.LeftCommand) || IsTouchOverHandle()))
             {
                 inputBlocker.gameObject.SetActive(false);
                 GlobalManager.Get().ResetCursor();
@@ -321,20 +364,23 @@ namespace _Project.Scripts
                     return;
                 }
 
-            // We now get to touchscreen controlls
+            // We now get to touchscreen controls
             // If we have exactly 2 touches we zoom
             if (Input.touchCount == 2){
                 PinchToZoom();
                 return;
             }
+
             // If we have exactly 1 touch
             if (Input.touchCount == 1){
                 Touch t = Input.GetTouch(0); // collect information about the touch
+                bool doubleTapDetected = IsDoubleTap(t);
                 // clicks on game objects are excluded
-                if(EventSystem.current.IsPointerOverGameObject(t.fingerId))
+                if(EventSystem.current.IsPointerOverGameObject(t.fingerId) || IsTouchOverHandle())
                     return;
                 // if it is a double tap we orbit
-                if (t.phase == TouchPhase.Began && t.tapCount == 2)
+                Debug.Log("doubleTapDetected " + doubleTapDetected + " t.phase: "+ t.phase);
+                if (doubleTapDetected)
                 {
                     orbiting = true;
                     activeFingerId = t.fingerId;
@@ -343,11 +389,12 @@ namespace _Project.Scripts
                     return;
                 }
                 // if it is not a double tap we pan
-                if(Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began){
+                if(Input.touchCount == 1 && t.phase == TouchPhase.Began){
                     inputBlocker.gameObject.SetActive(true);
                     panning = true;
                     activeFingerId = t.fingerId;
                     GlobalManager.Get().SetCursor(CursorType.GrabCursor);
+                    //Debug.Log("Starting panning through touch");
                     return;
                 }
             }
@@ -424,8 +471,8 @@ namespace _Project.Scripts
                 Touch t = Input.GetTouch(0);
                 if (t.phase == TouchPhase.Moved) {
                     // deltaPosition is in screen pixels → scale to world-space pan
-                    xDistance = -t.deltaPosition.x * 0.001f;  // TODO: Tune this scaling!
-                    yDistance = -t.deltaPosition.y * 0.001f;
+                    xDistance = -t.deltaPosition.x * 0.0001f;
+                    yDistance = -t.deltaPosition.y * 0.0001f;
                 }
             } else {
                 return false;

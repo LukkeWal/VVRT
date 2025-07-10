@@ -18,7 +18,7 @@ public class Make3dTex : MonoBehaviour
 {
     [MenuItem("CreateVoxelGrid/3DTexture")]
     public static void CreateAllTextures(){
-        CreateTexture3D("/bunny512x512x361.raw","BunnyTex",512,512,361, DecodeType.EightBit, 1);
+        //CreateTexture3D("/bunny512x512x361.raw","BunnyTex",512,512,361, DecodeType.EightBit, 1);
         CreateTexture3D("/bucky32x32x32.raw","BuckyTex",32,32,32, DecodeType.EightBit, 1);
         CreateTexture3D("/engine256x256x256.raw","EngineTex",256,256,256, DecodeType.EightBit, 1);
         CreateTexture3D("/hnut256_uint.raw","HazelTex",256,256,256, DecodeType.EightBit, 1);
