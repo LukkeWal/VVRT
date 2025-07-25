@@ -1,8 +1,8 @@
-# Virtual Volume Ray Caster
-The Virtual Ray Tracer (VRT) is an educational tool to provide users with an interactive environment for understanding ray tracing concepts. Extending VRT, we created Virtual Volume Raycaster (VVRT), an interactive and gamified application that allows to view and explore the volume raycasting process in real-time. The goal is to help the users—students of Scientific Visualization and the general public—to better understand the steps of volume raycasting and their characteristics, for example the effect of early ray termination. VVRT shows a scene containing a camera casting rays which interact with a volume in the scene. Learners are able to modify and explore different settings, e.g., concerning the transfer function or ray sampling step size. Our educational tool is built with the cross-platform engine Unity, and we make it fully available to be extended and/or adjusted to fit the requirements of courses at other institutions, educational tutorials, or of enthusiasts from the general public. Two user studies demonstrate the effectiveness of VVRT in supporting the understanding and teaching of volume raycasting.
+# Virtual Ray Tracer
+Virtual Ray Tracer is a Unity application that visualizes ray tracing an ray casting. The application shows a scene with a camera, lights, objects and volumes. Rays slowly shoot from the camera and interact with the lights and objects in the scene. Users can change the settings and material properties of the objects and see how this affects the rays in real-time. The application comes with a number of scenes that introduce the user to settings and controls as well as various concepts and techniques.
 
 ## Using the application
-To try out a ready version of the VVRT download the zip folder with [this dropbox link](https://www.dropbox.com/scl/fo/1manjxd07j5n2zjqg18ld/AMEdYlu-3ltPDNdRuyGZD6c?rlkey=a19gma37iuq2a3o3jhl0akpyo&st=vnu13trr&dl=0) which contians a build version for Windows, Mac, and Linux. Extract the zip folder, open it and launch your VVRT build. The Virtual Volume Ray Caster can be found in the levels menu under the title "Ray Casting"
+To try out a ready version of the VRT download the zip folder with [this dropbox link](https://www.dropbox.com/scl/fo/1manjxd07j5n2zjqg18ld/AMEdYlu-3ltPDNdRuyGZD6c?rlkey=a19gma37iuq2a3o3jhl0akpyo&st=vnu13trr&dl=0) which contians a build version for Windows, Mac, and Linux. Extract the zip folder, open it and launch your VVRT build. The Virtual Volume Ray Caster can be found in the levels menu under the title "Ray Casting"
 
 Alternatively you can use the web version of VVRT in your [browser](https://lukkewal.github.io/VVRT), when using it on mobile we reccomend landscape mode.
 
@@ -24,7 +24,8 @@ Virtual Ray Tracer (VRT) as well as Virtual Volume Raycaster (VVRT) were created
 
 The application is under active development. Additional features as well as software maintenance are being worked on.
 
-## Papers
+## Projects
+### Inlcuded in this version
 
 ##### Papers:
 
@@ -48,25 +49,27 @@ The application is under active development. Additional features as well as soft
 
 [R. Rosema: Adapting Virtual Ray Tracer to a Web and Mobile Application, BSc Thesis, University of Groningen, 2022.](https://fse.studenttheses.ub.rug.nl/27894)
 
-[T. Couperus: Virtual Ray Tracer: Teaching Procedural Textures, BSc Thesis, University of Groningen, 2023.](https://fse.studenttheses.ub.rug.nl/30703/)
-
-[V. Gaya Walters: Raster Textures in Virtual Ray Tracer, BSc Thesis, University of Groningen, 2023.](https://fse.studenttheses.ub.rug.nl/30801/)
-
 [L. van der Wal: Virtual Ray Tracer: Ray Casting Support, BSc Thesis, University of Groningen, 2023.](https://fse.studenttheses.ub.rug.nl/31739/)
 
 [P. Blesinger: Real-time Visualisation of Volume Raycasting in Virtual Ray Tracer. Bachelor's Thesis, University of Groningen 2024](https://fse.studenttheses.ub.rug.nl/34382/)
+
+### Excluded in this version
+
+##### thesis
+[T. Couperus: Virtual Ray Tracer: Teaching Procedural Textures, BSc Thesis, University of Groningen, 2023.](https://fse.studenttheses.ub.rug.nl/30703/)
+
+[V. Gaya Walters: Raster Textures in Virtual Ray Tracer, BSc Thesis, University of Groningen, 2023.](https://fse.studenttheses.ub.rug.nl/30801/)
 
 [A. Aaen: Virtual Ray Tracer in VR, BSc thesis, University of Groningen, 2024.](https://fse.studenttheses.ub.rug.nl/33355/)
 
 [I, Bodola: Virtual Ray Tracer: Using Light to Deform Objects, BSc thesis, University of Groningen, 2024.](https://fse.studenttheses.ub.rug.nl/33891/)
 
-##### Others:
+##### MSc Research Internship:
 
 [A, Bredenbals: Visualising Ray Marching in 3D, Msc Research Internship, University of Groningen, 2022.](https://fse.studenttheses.ub.rug.nl/27977/)
 
+
 Further documents will appear here in due course.
-
-
 
 ## License
 
