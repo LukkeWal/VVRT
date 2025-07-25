@@ -4,6 +4,9 @@ Welcome to the documentation for this Unity project! Hopefully this markdown fil
 
 # Table of Contents
 
+2. [Getting Started](#getting-started)
+    - [Documentation outline](#documentation-outline)
+    - [Setting up Unity](#setting-up-unity)
 1. [Main Scripts](#main-scripts)  
     - [Camera Controls](#camera-controls)  
     - [Scene Manager](#scene-manager)  
@@ -26,6 +29,22 @@ Welcome to the documentation for this Unity project! Hopefully this markdown fil
     - [Creating a non-skippable tasks](#creating-a-non-skippable-task)
 4. [Running the Testing Suite](#running-the-testing-suite)  
 5. [Code Style Recommendations](#code-style-reccomendations)  
+
+# Getting Started
+Thank you for choosing to contribute to Virtual Ray Tracer! This documentation was created to help you understand the project and its codebase. 
+
+### Documentation outline
+This documentation starts with some instructions on [how to open the codebase for the first time](#setting-up-unity) so you can try out the application and familiarze yourself with the way unity works. After this we start delving into the code: 
+- We talk about [the core scripts of the project](#main-scripts), these are the scripts that tie everything together, and are most likely to be changed / expanded upon in future projects. 
+- In case you are working on Volumes and are unhappy with the volumes currently available, we explain [how to add a new volume](#adding-new-voxel-grids). 
+- Finding out where and how to [edit tutorials](#editing-tutorials) was hard, so we dedicate a section of this documentation to it. 
+
+We then get to some quality control. It is easy to accidentally break something made by a predecesor, to make it easier to spot these mistakes we created a [testing suite](#running-the-testing-suite). To protect future students from breaking your code, please add some tests to check everything is in working order when you are finishing your project :)
+
+Lastly tying in with the testing suite we added some [code style reccomendations](#code-style-reccomendations). If possible try to stick to these, as they make it easier  for multiple projects to be combined together. This is especially important when multiple projects are being developed at the same time. It is a shame when multiple projects are created, but they are not easy to combine. This often leads to cool features and projects getting lost along the way.
+
+### Setting up Unity
+To get started you'll want to install [UnityHub](https://unity.com/download). With UnityHub you will be able to open the UnityProject folder in this repository (it will automatically prompt you to download the projects current Unity version). When you launch the project with UnityHub it will open the Unity Editor, here you can make the changes you want, and when you are finished, create your final builds. 
 
 # Main Scripts
 
