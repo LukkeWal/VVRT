@@ -4,10 +4,10 @@ Welcome to the documentation for this Unity project! Hopefully this markdown fil
 
 # Table of Contents
 
-2. [Getting Started](#getting-started)
+1. [Getting Started](#getting-started)
     - [Documentation outline](#documentation-outline)
     - [Setting up Unity](#setting-up-unity)
-1. [Main Scripts](#main-scripts)  
+2. [Main Scripts](#main-scripts)  
     - [Camera Controls](#camera-controls)  
     - [Scene Manager](#scene-manager)  
     - [Ray Managers & Ray Algorithms](#ray-managers--ray-algorithms)  
@@ -21,14 +21,14 @@ Welcome to the documentation for this Unity project! Hopefully this markdown fil
     - [Shaders](#shaders)  
       - [Ray tracing shaders](#ray-tracing-shaders)  
       - [Ray casting live preview shader](#ray-casting-live-preview-shader)  
-2. [Adding New Voxel Grids](#adding-new-voxel-grids)  
-3. [Editing Tutorials](#editing-tutorials)  
+3. [Adding New Voxel Grids](#adding-new-voxel-grids)  
+4. [Editing Tutorials](#editing-tutorials)  
     - [Tutorial information location](#tutorial-information-location)
     - [Tutorial per level](#tutorial-per-level)
     - [Tasks](#tasks)
     - [Creating a non-skippable tasks](#creating-a-non-skippable-task)
-4. [Running the Testing Suite](#running-the-testing-suite)  
-5. [Code Style Recommendations](#code-style-reccomendations)  
+5. [Running the Testing Suite](#running-the-testing-suite)  
+6. [Code Style Recommendations](#code-style-reccomendations)  
 
 # Getting Started
 Thank you for choosing to contribute to Virtual Ray Tracer! This documentation was created to help you understand the project and its codebase. 
