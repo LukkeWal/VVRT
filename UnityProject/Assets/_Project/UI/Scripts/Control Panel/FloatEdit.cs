@@ -47,27 +47,16 @@ namespace _Project.UI.Scripts.Control_Panel
             set
             {
                 if (this.value == value) return;
-
                 // Set the value.
                 this.value = CorrectValue(value);
 
                 // Only change the slider if it is not up-to-date.
                 if (slider.value != this.value)
                     slider.value = this.value;
-
-                // Try to change the input field if it is not up-to-date.
-                try
-                {
-                    if (CorrectValue(float.Parse(input.text)) != this.value)
-                        input.text = this.value.ToString();
-                }
-                // An improperly formated input field is interpreted as a 0. Update it if the value is not actually 0.
-                catch (FormatException)
-                {
-                    if (this.value != CorrectValue(0.0f))
-                        input.text = this.value.ToString();
-                }
-
+                // Ensure the input field if it is not up-to-date.
+                // Use SetTextWithoutNotify to prevent recursive callbacks 
+                // Use this.value.ToString because it uses an explicit culture (1.5 vs 1,5 for example)
+                input.SetTextWithoutNotify(this.value.ToString(System.Globalization.CultureInfo.InvariantCulture));
                 // Notify listeners of the change.
                 OnValueChanged?.Invoke(this.value);
             }
